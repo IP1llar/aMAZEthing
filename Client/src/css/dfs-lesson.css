@@ -15,8 +15,12 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    transform: rotate(-90deg);
   }
-  
+  .but-options{
+    height: fit-content;
+
+  }
   .yellow-line{
     stroke: 'yellow'
   }

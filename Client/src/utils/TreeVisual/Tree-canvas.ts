@@ -1,5 +1,3 @@
-import { isGetAccessor } from "typescript";
-
 const cheatPosX: number[][] = [[350], [300, 400], [250, 350, 450], [200, 300, 400, 500], [150, 250, 350, 450, 550], [100, 200, 300, 400, 500, 600], [50, 150, 250, 350, 450, 550, 650], [0, 100, 200, 300, 400, 500, 600]];
 function delay(time: number) {
     return new Promise((res) => setTimeout(res, time));
@@ -117,7 +115,6 @@ export class Tree {
         this.depth++;
         this.depth = bfsVisual(queue, this.depth) - 1;
         function bfsVisual(queue: any, depth: any) {
-            let numNodesInDepth = queue.length;
             let newQ: any = [];
             document.getElementById("myCanvas")!.innerHTML += `<div id='tree-level${depth}' class='tree-level'></div>`;
             for (let node of queue) {
@@ -131,6 +128,8 @@ export class Tree {
             if (newQ.length !== 0) depth = bfsVisual(newQ, depth);
             return depth
         }
+
+        
 
     }
     lines(currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100) {
@@ -167,7 +166,7 @@ export class Graph {
     }
     createVertices(nodesArr: any, depth: number, totalLines: number, currentDepth: number = 0, currentLine: number = 100, created: boolean = false, nodesVisited = 0) {
         if (currentDepth + 1 === depth) {
-            console.log(this.vertices)
+            // console.log(this.vertices)
             return
         }
         if (!created) {
@@ -184,16 +183,16 @@ export class Graph {
         let nodesPrevLvl = nodesVisited;
         let nodesXlevel = nodesArr[currentDepth].length;
         let nodesNextLevel = nodesArr[currentDepth + 1].length;
-        console.log({ nodesVisited, nodesXlevel, nodesNextLevel })
+        // console.log({ nodesVisited, nodesXlevel, nodesNextLevel })
 
         for (let i = nodesVisited; i < nodesXlevel + nodesPrevLvl; i++) {
             let source = this.vertices[i];
-            console.log(`node number ${source.id}`)
+            // console.log(`node number ${source.id}`)
             for (let j = nodesPrevLvl + nodesXlevel; j < nodesPrevLvl + nodesNextLevel + nodesXlevel; j++) {
                 let destination = this.vertices[j]
                 this.setConnection(source, destination, currentLine);
                 currentLine++
-                console.log(`connection from ${source.id} to${destination.id}`)
+                // console.log(`connection from ${source.id} to${destination.id}`)
             }
             nodesVisited++
         }
@@ -208,29 +207,29 @@ export class Graph {
     }
 
     async dfs(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [{ 0: 0, 1: this.vertices[0] }], depth = 0) {
-        console.log({ currentPos, end, path })
+        // console.log({ currentPos, end, path })
         depth++
         if (depth === 100) return
         let neighbors = currentPos.getAdjacencies()
 
         let res = checkNeighbors(neighbors, end)
         if (res[0]) return path.concat(res[1])
-        console.log(neighbors)
+        // console.log(neighbors)
         for (let neighbor of neighbors) {
 
             let visitedFlag = false;
             for (let visited of path) {
-                console.log(visited, path)
-                console.log(depth)
+                // console.log(visited, path)
+                // console.log(depth)
 
                 if (neighbor['1'].id === visited['1'].id) {
-                    console.log('here Visited!')
+                    // console.log('here Visited!')
                     visitedFlag = true;
                     break;
                 }
 
             }
-            console.log(neighbor)
+            // console.log(neighbor)
             if (visitedFlag === true) continue;
 
             let search: any = await this.dfs(neighbor['1'], end, path.concat(neighbor), depth);
@@ -240,26 +239,26 @@ export class Graph {
 
         return false;
         function checkNeighbors(neighbors: any, end: any) {
-            console.log({neighbors})
+            // console.log({neighbors})
             for (let neighbor of neighbors) {
-                console.log(`${neighbor['1'].id} compared to ${end.id}`)
+                // console.log(`${neighbor['1'].id} compared to ${end.id}`)
                 if (neighbor['1'].id === end.id) return [true, [neighbor]]
             }
             return [false, null]
         }
     }
-    printPath(path: any) {
+    async printPath(path: any) {
         document.getElementById(`${path[0]['1'].id}`)!.style.fill = 'yellow';
         path.shift()
-        async function printing(path: any) {
-            for (let el of path) {
-                await delay(500);
-                document.getElementById(`${el['0']}`)!.style["stroke"] = 'beige';
-                await delay(500);
-                document.getElementById(`${el['1'].id}`)!.style.fill = 'yellow';
-            }
-        };
-        printing(path)
+
+        for (let el of path) {
+            await delay(500);
+            document.getElementById(`${el['0']}`)!.style["stroke"] = 'beige';
+            await delay(500);
+            document.getElementById(`${el['1'].id}`)!.style.fill = 'yellow';
+        }
+
+
     }
 }
 
@@ -276,13 +275,13 @@ class Cell {
     getAdjacencies() {
         let shuffledAdj = Array(this.adjacencies.length).fill(null);
         for (let i = 0; i < shuffledAdj.length; i++) {
-            let index = Math.floor(Math.random()*shuffledAdj.length);
+            let index = Math.floor(Math.random() * shuffledAdj.length);
             while (shuffledAdj[index] !== null) {
-                index = Math.floor(Math.random()*shuffledAdj.length);
+                index = Math.floor(Math.random() * shuffledAdj.length);
             }
             shuffledAdj[index] = this.adjacencies[i];
         }
-        console.log({shuffledAdj},this.adjacencies)
+        // console.log({shuffledAdj},this.adjacencies)
         return shuffledAdj;
     }
     setAdjacent(node: any, lineID: number) {
