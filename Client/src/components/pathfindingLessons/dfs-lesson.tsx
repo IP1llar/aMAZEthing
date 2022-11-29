@@ -6,7 +6,7 @@ function DFSLesson() {
     async function TreeVisual() {
       const t = new Tree();
       await delay(1000);
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 14; i++) {
         t.add();
       }
       console.log(t);
@@ -15,7 +15,9 @@ function DFSLesson() {
       t.getNodes();
       let g = new Graph(t.getArrNodes(), t.getDepth(), t.getTotalLines());
       console.log(g.getVertices())
-      g.dfs();
+      let path = g.dfs();
+      console.log('shortest path:',path);
+      g.printPath(path);
     }
     TreeVisual();
   }, []);

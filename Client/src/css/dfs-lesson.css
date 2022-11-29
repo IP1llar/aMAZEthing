@@ -18,6 +18,9 @@
     flex-direction: column;
   }
   
+  .yellow-line{
+    stroke: 'yellow'
+  }
   .svg-circle{
     height:100px;
     width:100px;

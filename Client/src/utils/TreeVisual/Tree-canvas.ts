@@ -142,7 +142,7 @@ export class Tree {
                 for (let j = 0; j < collectionBLW.length; j++) {
                     let posx1 = cheatPosX[collectionBLW.length - 1][j];
                     let posy1 = ((currentLevel) * 100) + 50;
-                    document.getElementById(`myCanvas`)!.innerHTML += `<svg class="svg-line"><line id="${lineID}" x1="${posx0}" y1="${posy0}" x2="${posx1}" y2="${posy1}" style="stroke:rgb(0,0,0);stroke-width:3" /></svg>`
+                    document.getElementById(`myCanvas`)!.innerHTML += `<svg class="svg-line"><line id="${lineID}" x1="${posx0}" y1="${posy0}" x2="${posx1}" y2="${posy1}"  style="stroke:black;stroke-width:3" /></svg>`
                     lineID++
                 }
             }
@@ -209,15 +209,21 @@ export class Graph {
         console.log({currentPos,end,path})
         let paths: any = [];
         let neighbors = currentPos.getAdjacencies()
-        if(checkNeighbors(neighbors,end)) return path.concat([end])
+        let res = checkNeighbors(neighbors,end)
+        if(res[0]) return path.concat([res[1]])
         console.log(neighbors)
         for (let neighbor of neighbors) {
+            let visitedFlag = false;
             for(let visited of path){
-                for(let adjacency of visited.adjacencies){
-                    if(adjacency['1'] === neighbor) return true
-                }
+                console.log(`${neighbor['1'].id} compared to ${visited.id}`)
+                if(neighbor['1'].id === visited.id){
+                    visitedFlag = true;
+                    break;
+                } 
             }
-            let search = this.dfs(neighbor, end, path.concat(neighbor));
+            if(visitedFlag===true) continue;
+            let search = this.dfs(neighbor['1'], end, path.concat(neighbor));
+            console.log('Search is:',search)
             if (search) paths.push(search)
         }
         if (paths.length) {
@@ -227,9 +233,29 @@ export class Graph {
         return false;
         function checkNeighbors(neighbors:any,end:any){
             for(let neighbor of neighbors){
-                if(neighbor['1'] === end) return true 
+                console.log(`${neighbor['1'].id} compared to ${end.id}`)
+                if(neighbor['1'].id === end.id) return [true,neighbor]
             }
+            return [false,null]
         }
+    }
+    printPath(path:any){
+        document.getElementById(`${path[0].id}`)!.style.fill = 'yellow';
+        console.log(document.getElementById(`${path[1]['0']}`)!.style);
+        path.shift()
+        console.log(path)
+        async function printing(path:any){
+            console.log(path)
+            for(let el  of path){
+                console.log(el)
+                await delay(500);
+                console.log(document.getElementById(`${el['0']}`)!.style)
+                document.getElementById(`${el['0']}`)!.style["stroke"] = 'beige';
+                await delay(500);
+                document.getElementById(`${el['1'].id}`)!.style.fill = 'yellow';
+            }
+        };
+        printing(path)
     }
 }
 
