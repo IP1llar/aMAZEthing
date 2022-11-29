@@ -17,7 +17,7 @@ function Profile() {
   useEffect(()=>{
     const base64String:any = Buffer.from(user.avatar.data.data).toString("base64");
     setImg(base64String);
-  },[user]);
+  },[]);
   
   function changeUsername(e:any){ //TODO if type is Event value is not recognized
     const { value } = e.target;
