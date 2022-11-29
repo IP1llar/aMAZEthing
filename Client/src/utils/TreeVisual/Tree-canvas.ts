@@ -1,4 +1,6 @@
-const cheatPosX: number[][] = [[210], [160, 260], [110, 210, 310], [60, 160, 260, 360], [10, 110, 210, 310, 410], [-40, 60, 160, 260, 360, 460], [-90, 10, 110, 210, 310, 410, 510]];
+import { isGetAccessor } from "typescript";
+
+const cheatPosX: number[][] = [[350], [300, 400], [250, 350, 450], [200, 300, 400, 500], [150, 250, 350, 450, 550], [100, 200, 300, 400, 500, 600], [50, 150, 250, 350, 450, 550, 650], [0, 100, 200, 300, 400, 500, 600]];
 function delay(time: number) {
     return new Promise((res) => setTimeout(res, time));
 }
@@ -88,14 +90,14 @@ export class Tree {
                     node.children.push(newNode)
                     return true
                 } else {
-
-                    node.children.forEach((el: Node) => {
-
-                        if (trigger) return true
-                        if (Math.floor(Math.random() * 10) > 5) {
-                            trigger = evalChildren(el, numNodes);
-                        }
-                    })
+                    while (!trigger) {
+                        node.children.forEach((el: Node) => {
+                            if (trigger) return true
+                            if (Math.floor(Math.random() * 10) > 1) {//short number= longest display / long number = short display
+                                trigger = evalChildren(el, numNodes);
+                            }
+                        })
+                    }
 
                 }
 
@@ -160,13 +162,13 @@ export class Graph {
         this.vertices = [];
         this.createVertices(node, depth, totalLines)
     }
-    getVertices(){
+    getVertices() {
         return this.vertices
     }
     createVertices(nodesArr: any, depth: number, totalLines: number, currentDepth: number = 0, currentLine: number = 100, created: boolean = false, nodesVisited = 0) {
         if (currentDepth + 1 === depth) {
-           console.log(this.vertices)
-           return
+            console.log(this.vertices)
+            return
         }
         if (!created) {
             for (let i = 0; i < nodesArr.length; i++) {
@@ -205,51 +207,53 @@ export class Graph {
         destination.setAdjacent(source, lineID);
     }
 
-    dfs(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [this.vertices[0]]) {
-        console.log({currentPos,end,path})
-        let paths: any = [];
+    async dfs(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [{ 0: 0, 1: this.vertices[0] }], depth = 0) {
+        console.log({ currentPos, end, path })
+        depth++
+        if (depth === 100) return
         let neighbors = currentPos.getAdjacencies()
-        let res = checkNeighbors(neighbors,end)
-        if(res[0]) return path.concat([res[1]])
+
+        let res = checkNeighbors(neighbors, end)
+        if (res[0]) return path.concat(res[1])
         console.log(neighbors)
         for (let neighbor of neighbors) {
+
             let visitedFlag = false;
-            for(let visited of path){
-                console.log(`${neighbor['1'].id} compared to ${visited.id}`)
-                if(neighbor['1'].id === visited.id){
+            for (let visited of path) {
+                console.log(visited, path)
+                console.log(depth)
+
+                if (neighbor['1'].id === visited['1'].id) {
+                    console.log('here Visited!')
                     visitedFlag = true;
                     break;
-                } 
+                }
+
             }
-            if(visitedFlag===true) continue;
-            let search = this.dfs(neighbor['1'], end, path.concat(neighbor));
-            console.log('Search is:',search)
-            if (search) paths.push(search)
+            console.log(neighbor)
+            if (visitedFlag === true) continue;
+
+            let search: any = await this.dfs(neighbor['1'], end, path.concat(neighbor), depth);
+            if (search) return search;
+
         }
-        if (paths.length) {
-            const shortestPath = paths.reduce((acc: any, path: any) => path.length < acc.length ? path : acc);
-            return shortestPath;
-        }
+
         return false;
-        function checkNeighbors(neighbors:any,end:any){
-            for(let neighbor of neighbors){
+        function checkNeighbors(neighbors: any, end: any) {
+            console.log({neighbors})
+            for (let neighbor of neighbors) {
                 console.log(`${neighbor['1'].id} compared to ${end.id}`)
-                if(neighbor['1'].id === end.id) return [true,neighbor]
+                if (neighbor['1'].id === end.id) return [true, [neighbor]]
             }
-            return [false,null]
+            return [false, null]
         }
     }
-    printPath(path:any){
-        document.getElementById(`${path[0].id}`)!.style.fill = 'yellow';
-        console.log(document.getElementById(`${path[1]['0']}`)!.style);
+    printPath(path: any) {
+        document.getElementById(`${path[0]['1'].id}`)!.style.fill = 'yellow';
         path.shift()
-        console.log(path)
-        async function printing(path:any){
-            console.log(path)
-            for(let el  of path){
-                console.log(el)
+        async function printing(path: any) {
+            for (let el of path) {
                 await delay(500);
-                console.log(document.getElementById(`${el['0']}`)!.style)
                 document.getElementById(`${el['0']}`)!.style["stroke"] = 'beige';
                 await delay(500);
                 document.getElementById(`${el['1'].id}`)!.style.fill = 'yellow';
@@ -270,7 +274,16 @@ class Cell {
         this.adjacencies = [];
     }
     getAdjacencies() {
-        return this.adjacencies;
+        let shuffledAdj = Array(this.adjacencies.length).fill(null);
+        for (let i = 0; i < shuffledAdj.length; i++) {
+            let index = Math.floor(Math.random()*shuffledAdj.length);
+            while (shuffledAdj[index] !== null) {
+                index = Math.floor(Math.random()*shuffledAdj.length);
+            }
+            shuffledAdj[index] = this.adjacencies[i];
+        }
+        console.log({shuffledAdj},this.adjacencies)
+        return shuffledAdj;
     }
     setAdjacent(node: any, lineID: number) {
         this.adjacencies.push({

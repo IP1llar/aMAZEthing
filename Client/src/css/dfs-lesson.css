@@ -10,9 +10,8 @@
   }
   #myCanvas{
     position: relative;
-    width:420px;
+    width:700px;
     height:fit-content;
-    border:0.1px solid #000000;
     display: flex;
     align-items: center;
     flex-direction: column;
