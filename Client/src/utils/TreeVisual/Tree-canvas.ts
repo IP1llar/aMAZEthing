@@ -1,3 +1,5 @@
+import { value } from "../graph";
+
 const cheatPosX: number[][] = [[350], [300, 400], [250, 350, 450], [200, 300, 400, 500], [150, 250, 350, 450, 550], [100, 200, 300, 400, 500, 600], [50, 150, 250, 350, 450, 550, 650], [0, 100, 200, 300, 400, 500, 600]];
 function delay(time: number) {
     return new Promise((res) => setTimeout(res, time));
@@ -91,7 +93,7 @@ export class Tree {
                     while (!trigger) {
                         node.children.forEach((el: Node) => {
                             if (trigger) return true
-                            if (Math.floor(Math.random() * 10) > 1) {//short number= longest display / long number = short display
+                            if (Math.floor(Math.random() * 10) > 0) {//short number= longest display / long number = short display
                                 trigger = evalChildren(el, numNodes);
                             }
                         })
@@ -108,7 +110,7 @@ export class Tree {
     bfs() {
         const queue: any = [];
         document.getElementById("myCanvas")!.innerHTML += `<div id='tree-level${this.depth}' class='tree-level'></div>`;
-        document.getElementById(`tree-level${this.depth}`)!.innerHTML += `<svg class="svg-circle"><circle cx="50%" cy="50%" r="30" stroke="#1B432E" stroke-width="3" fill="#6EAC64"  id="${this.root.value}" ></circle></svg>`
+        document.getElementById(`tree-level${this.depth}`)!.innerHTML += `<svg class="svg-circle"><circle cx="50%" cy="50%" r="20" stroke="#1B432E" stroke-width="3" fill="#6EAC64"  id="${this.root.value}" ></circle></svg>`
         this.root.children.forEach((el: any) => {
             queue.push(el);
         })
@@ -118,7 +120,7 @@ export class Tree {
             let newQ: any = [];
             document.getElementById("myCanvas")!.innerHTML += `<div id='tree-level${depth}' class='tree-level'></div>`;
             for (let node of queue) {
-                document.getElementById(`tree-level${depth}`)!.innerHTML += `<svg class="svg-circle"><circle cx="50%" cy="50%" r="30" stroke="#1B432E" stroke-width="3" fill="#6EAC64"  id="${node.value}" ></circle></svg>`
+                document.getElementById(`tree-level${depth}`)!.innerHTML += `<svg class="svg-circle"><circle cx="50%" cy="50%" r="20" stroke="#1B432E" stroke-width="3" fill="#6EAC64"  id="${node.value}" ></circle></svg>`
                 // document.getElementById(`tree-level${depth}`)!.innerHTML += `<div class='dot' id="${node.value}" onClick={console.log(${node.value})}></div>`
                 node.children.forEach((child: any) => {
                     newQ.push(child);
@@ -129,7 +131,7 @@ export class Tree {
             return depth
         }
 
-        
+
 
     }
     lines(currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100) {
@@ -143,7 +145,7 @@ export class Tree {
                 for (let j = 0; j < collectionBLW.length; j++) {
                     let posx1 = cheatPosX[collectionBLW.length - 1][j];
                     let posy1 = ((currentLevel) * 100) + 50;
-                    document.getElementById(`myCanvas`)!.innerHTML += `<svg class="svg-line"><line id="${lineID}" x1="${posx0}" y1="${posy0}" x2="${posx1}" y2="${posy1}"  style="stroke:black;stroke-width:3" /></svg>`
+                    document.getElementById(`myCanvas`)!.innerHTML += `<svg class="svg-line"><line id="${lineID}" x1="${posx0}" y1="${posy0}" x2="${posx1}" y2="${posy1}"  style="stroke:black;stroke-width:2" /></svg>`
                     lineID++
                 }
             }
@@ -206,33 +208,21 @@ export class Graph {
         destination.setAdjacent(source, lineID);
     }
 
-    async dfs(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [{ 0: 0, 1: this.vertices[0] }], depth = 0) {
-        // console.log({ currentPos, end, path })
-        depth++
-        if (depth === 100) return
+    async dfs(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [{ 0: 0, 1: this.vertices[0] }]) {
         let neighbors = currentPos.getAdjacencies()
-
         let res = checkNeighbors(neighbors, end)
         if (res[0]) return path.concat(res[1])
-        // console.log(neighbors)
         for (let neighbor of neighbors) {
-
             let visitedFlag = false;
             for (let visited of path) {
-                // console.log(visited, path)
-                // console.log(depth)
-
                 if (neighbor['1'].id === visited['1'].id) {
-                    // console.log('here Visited!')
                     visitedFlag = true;
                     break;
                 }
-
             }
             // console.log(neighbor)
             if (visitedFlag === true) continue;
-
-            let search: any = await this.dfs(neighbor['1'], end, path.concat(neighbor), depth);
+            let search: any = await this.dfs(neighbor['1'], end, path.concat(neighbor));
             if (search) return search;
 
         }
@@ -257,10 +247,40 @@ export class Graph {
             await delay(500);
             document.getElementById(`${el['1'].id}`)!.style.fill = 'yellow';
         }
+    }
 
+    async bfs(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [{ 0: 0, 1: this.vertices[0] }], depth = 0) {
+        let q = [];
+        let found = false;
+        let count=0
+        q.unshift({'0':0,'1':currentPos});
+        while (q.length && !found&&count<100) {
+            count++
+            let node = q.pop();
+            let neighbors:any = node['1'].adjacencies;
+            console.log(neighbors)
+            for (let neighbor of neighbors) {
+                let visitedFlag = false;
+                for (let visited of path) {
+                    if (neighbor['1'].id === visited['1'].id) {
+                        visitedFlag = true;
+                        
+                    }
 
+                }
+                if (visitedFlag === true) continue;
+                q.unshift(neighbor)
+                console.log('here')
+                path.push(neighbor)
+                if (neighbor['1'].id === end.id) {
+                    found = true;
+                }
+            }
+        }
+        return path;
     }
 }
+
 
 class Cell {
     id: number;
@@ -281,7 +301,6 @@ class Cell {
             }
             shuffledAdj[index] = this.adjacencies[i];
         }
-        // console.log({shuffledAdj},this.adjacencies)
         return shuffledAdj;
     }
     setAdjacent(node: any, lineID: number) {

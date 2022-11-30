@@ -8,7 +8,7 @@ function DFSLesson() {
     async function TreeVisual() {
       const t = new Tree();
       await delay(1000);
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 25; i++) {
         t.add();
       }
       t.bfs();
@@ -23,8 +23,8 @@ function DFSLesson() {
   async function dfs(){
     await graph?.printPath(await graph?.dfs())
   }
-  function bfs(){
-
+  async function bfs(){
+    await graph?.printPath(await graph?.bfs());
   }
   function delay(time: number) {
     return new Promise((res) => setTimeout(res, time));
