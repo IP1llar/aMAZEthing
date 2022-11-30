@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../../css/dijkstra-lesson.css";
 import { Tree, Graph } from "../../utils/TreeVisual/Tree-canvas";
-function DIJSKTRALesson() {
+function DIJKSTRALesson() {
   const [graph,setGraph] = useState<Graph>()
 
   useEffect(() => {
@@ -14,14 +14,14 @@ function DIJSKTRALesson() {
       t.bfs();
       t.linesWithWeights();
       t.getNodes();
-      let g = new Graph(t.getArrNodes(), t.getDepth(), t.getTotalLines());
+      console.log(t.getLineStructure())
+      let g = new Graph(t.getArrNodes(), t.getDepth(), t.getLineStructure());
       setGraph(g);
-     
     }
     TreeVisual();
   }, []);
-  async function djikstra(){
-    await graph?.printPath(await graph?.dfs())
+  async function dijkstra(){
+    console.log(await graph?.dijkstra());
   }
   
   function delay(time: number) {
@@ -29,15 +29,14 @@ function DIJSKTRALesson() {
   }
 
   return (
-    <div className="whole-page-wrapper">
+    <div className="whole-page-wrapper dijk">
       
       <div id="myCanvas"></div>
       <div className="but-options">
-        <button onClick={djikstra}>Djikstra</button>
-
+        <button onClick={dijkstra}>Dijkstra</button>
       </div>
     </div>
   );
 }
 
-export default DIJSKTRALesson;
+export default DIJKSTRALesson;

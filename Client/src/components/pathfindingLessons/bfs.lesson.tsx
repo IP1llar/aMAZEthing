@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "../../css/dfs-lesson.css";
+import "../../css/bfs-lesson.css";
 import { Tree, Graph } from "../../utils/TreeVisual/Tree-canvas";
 function BFSLesson() {
   const [graph,setGraph] = useState<Graph>()
@@ -29,8 +29,7 @@ function BFSLesson() {
   }
 
   return (
-    <div className="whole-page-wrapper">
-      
+    <div className="whole-page-wrapper bfs">
       <div id="myCanvas"></div>
       <div className="but-options">
         <button onClick={bfs}>BFS</button>

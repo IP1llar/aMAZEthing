@@ -42,6 +42,9 @@ export class Tree {
         this.nodes = [];
         this.lineStructure=[]
     }
+    getLineStructure(){
+        return this.lineStructure;
+    }
     getArrNodes() {
         return this.nodes;
     }
@@ -132,10 +135,8 @@ export class Tree {
             if (newQ.length !== 0) depth = bfsVisual(newQ, depth);
             return depth
         }
-
-
-
     }
+
     linesWithoutWeights(currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100) {
 
         if (currentLevel < this.depth) {
@@ -154,8 +155,6 @@ export class Tree {
             this.totalLines = lineID;
             this.linesWithoutWeights(currentDepth + 1, currentLevel + 1, lineID)
         }
-
-
     }
     linesWithWeights(currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100){
         if (currentLevel < this.depth) {
@@ -173,10 +172,9 @@ export class Tree {
                         weight = Math.floor(Math.random()*7);
                         if(weight>1) flag=true;
                         if(weight===3||weight===5||weight===7) weight--;
-                        console.log(weight)
                     }
                     document.getElementById(`myCanvas`)!.innerHTML += `<svg class="svg-line"><line id="${lineID}" x1="${posx0}" y1="${posy0}" x2="${posx1}" y2="${posy1}"  style="stroke:black;stroke-width:${weight}" /></svg>`
-                    this.lineStructure.push({id:lineID,lineWeight:weight})
+                    this.lineStructure.push({id:lineID,weight:weight})
                     lineID++
                 }
             }
@@ -188,13 +186,51 @@ export class Tree {
 
 export class Graph {
     vertices: any = [];
-    constructor(node: Node, depth: number, totalLines: number) {
+    constructor(node: Node, depth: number, lines: any) {
         this.vertices = [];
-        this.createVertices(node, depth, totalLines)
+        if(typeof lines === 'number') this.createVertices(node, depth, lines);
+        else this.createVerticesWeights(node, depth, lines);
     }
     getVertices() {
         return this.vertices
     }
+    createVerticesWeights(nodesArr: any, depth: number, obj: any, currentDepth: number = 0, currentLine: any = 100, created: boolean = false, nodesVisited = 0) {
+        if (currentDepth + 1 === depth) {
+            // console.log(this.vertices)
+            return
+        }
+
+        if (!created) {
+            for (let i = 0; i < nodesArr.length; i++) {
+                for (let node of nodesArr[i]) {
+                    let cell = new Cell(node.value);
+                    this.vertices.push(cell);
+                }
+            }
+            created = true;
+        }
+        let nodesPrevLvl = nodesVisited;
+        let nodesXlevel = nodesArr[currentDepth].length;
+        let nodesNextLevel = nodesArr[currentDepth + 1].length;
+        // console.log({ nodesVisited, nodesXlevel, nodesNextLevel })
+
+        for (let i = nodesVisited; i < nodesXlevel + nodesPrevLvl; i++) {
+            let source = this.vertices[i];
+            // console.log(`node number ${source.id}`)
+            for (let j = nodesPrevLvl + nodesXlevel; j < nodesPrevLvl + nodesNextLevel + nodesXlevel; j++) {
+                let destination = this.vertices[j]
+
+                let line = new Line(obj[currentLine-100].id,obj[currentLine-100].weight)
+                this.setConnection(source, destination, line);
+                currentLine++
+                // console.log(`connection from ${source.id} to${destination.id}`)
+            }
+            nodesVisited++
+        }
+        currentDepth++;
+        this.createVerticesWeights(nodesArr, depth, obj, currentDepth, currentLine, created, nodesVisited)
+    }
+
     createVertices(nodesArr: any, depth: number, totalLines: number, currentDepth: number = 0, currentLine: number = 100, created: boolean = false, nodesVisited = 0) {
         if (currentDepth + 1 === depth) {
             // console.log(this.vertices)
@@ -219,7 +255,8 @@ export class Graph {
             // console.log(`node number ${source.id}`)
             for (let j = nodesPrevLvl + nodesXlevel; j < nodesPrevLvl + nodesNextLevel + nodesXlevel; j++) {
                 let destination = this.vertices[j]
-                this.setConnection(source, destination, currentLine);
+                let line = new Line(currentLine,1)
+                this.setConnection(source, destination, line);
                 currentLine++
                 // console.log(`connection from ${source.id} to${destination.id}`)
             }
@@ -230,12 +267,12 @@ export class Graph {
         this.createVertices(nodesArr, depth, totalLines, currentDepth, currentLine, created, nodesVisited)
     }
 
-    setConnection(source: any, destination: any, lineID: number) {
-        source.setAdjacent(destination, lineID);
-        destination.setAdjacent(source, lineID);
+    setConnection(source: any, destination: any, line: Line) {
+        source.setAdjacent(destination, line);
+        destination.setAdjacent(source, line);
     }
 
-    async dfs(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [{ 0: 0, 1: this.vertices[0] }]) {
+    async dfs(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [{ 0: {id:0,weight:0}, 1: this.vertices[0] }]) {
         let neighbors = currentPos.getAdjacencies()
         let res = checkNeighbors(neighbors, end)
         if (res[0]) return path.concat(res[1])
@@ -270,13 +307,13 @@ export class Graph {
 
         for (let el of path) {
             await delay(500);
-            document.getElementById(`${el['0']}`)!.style["stroke"] = 'beige';
+            document.getElementById(`${el['0'].id}`)!.style["stroke"] = 'beige';
             await delay(500);
             document.getElementById(`${el['1'].id}`)!.style.fill = 'yellow';
         }
     }
 
-    async bfs(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [{ 0: 0, 1: this.vertices[0] }], depth = 0) {
+    async bfs(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [{ 0: {id:0,weight:0}, 1: this.vertices[0] }], depth = 0) {
         let q = [];
         let found = false;
         let count=0
@@ -291,9 +328,7 @@ export class Graph {
                 for (let visited of path) {
                     if (neighbor['1'].id === visited['1'].id) {
                         visitedFlag = true;
-                        
                     }
-
                 }
                 if (visitedFlag === true) continue;
                 q.unshift(neighbor)
@@ -306,13 +341,46 @@ export class Graph {
         }
         return path;
     }
+
+
+    async dijkstra(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [{ 0: {id:0,weight:0}, 1: this.vertices[0] }]){
+        console.log(this.vertices)
+        let count = 0;
+        let unvisitedNodes:{[key: value]: number} = {};
+        let visitedNodes:{[key: value]: number} = {};
+        for (let vertex of this.vertices) {
+            if (vertex === currentPos) unvisitedNodes[currentPos.id] = 0;
+            else unvisitedNodes[vertex.id] = Infinity;
+        }
+        console.log('FIRST STAGE',unvisitedNodes);
+        while(Object.keys(unvisitedNodes).length&&count<50){
+            count++
+            let node = Object.keys(unvisitedNodes).reduce((acc, key) => {
+                return unvisitedNodes[key] < acc[1] ? [key, unvisitedNodes[key]] : acc;
+              }, ['null', Infinity]);
+            
+            visitedNodes[node[0]] = unvisitedNodes[node[0]];//returning the first object not visited
+            console.log(node, visitedNodes, unvisitedNodes);
+            console.log(`Comparing ${node[0]} to ${end.id}`);
+            if (node[0] == end.id) break;
+            if (node[1] === Infinity) return false;
+            let neighbors = currentPos.adjacencies;
+            for (let neighbor of neighbors) {
+                let weight = neighbor['0'].weight;
+                let sum = unvisitedNodes[node[0]] + (weight as number);
+                if (sum < unvisitedNodes[neighbor['0'].weight]) unvisitedNodes[neighbor['1'].id] = sum;
+            }
+            delete unvisitedNodes[node[0]];
+         }
+         console.log('herereeee',visitedNodes,count)
+    }
 }
 
 
 class Cell {
     id: number;
     adjacencies: {
-        0: number,
+        0: Line,
         1: Cell
     }[];
     constructor(id: number) {
@@ -330,12 +398,20 @@ class Cell {
         }
         return shuffledAdj;
     }
-    setAdjacent(node: any, lineID: number) {
+    setAdjacent(node: any, line: Line) {
         this.adjacencies.push({
-            '0': lineID,
+            '0': line,
             '1': node
         });
     }
 }
 
+class Line{
+    id:number;
+    weight: number;
+    constructor(id:number,weight:number){
+        this.id = id;
+        this.weight = weight;
+    }
 
+}

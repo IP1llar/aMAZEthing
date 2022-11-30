@@ -125,7 +125,6 @@ export function dijkstra (valueX: value, valueY: value, graph: Graph) {
     console.log(node, visitedNodes, unvisitedNodes);
     if (node[0] === valueY) break;
     if (node[1] === Infinity) return false;
-    console.log();
     let neighbors = graph.neighbors(node[0]);
     console.log({neighbors})
     for (let neighbor of neighbors) {

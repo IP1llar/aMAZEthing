@@ -34,7 +34,7 @@
     z-index: 1;
   }
   
-  .dfs .tree-level{
+  .bfs .tree-level{
     height: 100px;
     width:fit-content;
     display: flex;

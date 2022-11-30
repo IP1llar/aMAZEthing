@@ -33,13 +33,11 @@
     position: absolute;
     z-index: 1;
   }
-  
-  .tree-level{
+  .dijk .tree-level{
     height: 175px;
     width:fit-content;
     display: flex;
     align-items: space-between;
     justify-content: center;
-   
   }
   

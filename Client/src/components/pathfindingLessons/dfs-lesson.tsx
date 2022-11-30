@@ -29,7 +29,7 @@ function DFSLesson() {
   }
 
   return (
-    <div className="whole-page-wrapper">
+    <div className="whole-page-wrapper dfs">
       
       <div id="myCanvas"></div>
       <div className="but-options">
