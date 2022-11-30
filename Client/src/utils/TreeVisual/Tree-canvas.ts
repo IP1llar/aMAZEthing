@@ -32,6 +32,7 @@ export class Tree {
     depth: number;
     numNodes: number;
     totalLines: number;
+    lineStructure:any[];
     nodes: any;
     constructor() {
         this.root = null;
@@ -39,6 +40,7 @@ export class Tree {
         this.numNodes = 0;
         this.totalLines = 0;
         this.nodes = [];
+        this.lineStructure=[]
     }
     getArrNodes() {
         return this.nodes;
@@ -134,7 +136,7 @@ export class Tree {
 
 
     }
-    lines(currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100) {
+    linesWithoutWeights(currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100) {
 
         if (currentLevel < this.depth) {
             let collection = document.getElementById(`tree-level${currentLevel}`)!.children
@@ -150,10 +152,37 @@ export class Tree {
                 }
             }
             this.totalLines = lineID;
-            this.lines(currentDepth + 1, currentLevel + 1, lineID)
+            this.linesWithoutWeights(currentDepth + 1, currentLevel + 1, lineID)
         }
 
 
+    }
+    linesWithWeights(currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100){
+        if (currentLevel < this.depth) {
+            let collection = document.getElementById(`tree-level${currentLevel}`)!.children
+            for (let i = 0; i < collection.length; i++) {
+                let collectionBLW = document.getElementById(`tree-level${currentLevel + 1}`)!.children
+                let posx0 = cheatPosX[collection.length - 1][i];
+                let posy0 = (currentDepth * 175) + 50;
+                for (let j = 0; j < collectionBLW.length; j++) {
+                    let posx1 = cheatPosX[collectionBLW.length - 1][j];
+                    let posy1 = ((currentLevel) * 175) + 50;
+                    let flag = false;
+                    let weight = 0;
+                    while(!flag){
+                        weight = Math.floor(Math.random()*7);
+                        if(weight>1) flag=true;
+                        if(weight===3||weight===5||weight===7) weight--;
+                        console.log(weight)
+                    }
+                    document.getElementById(`myCanvas`)!.innerHTML += `<svg class="svg-line"><line id="${lineID}" x1="${posx0}" y1="${posy0}" x2="${posx1}" y2="${posy1}"  style="stroke:black;stroke-width:${weight}" /></svg>`
+                    this.lineStructure.push({id:lineID,lineWeight:weight})
+                    lineID++
+                }
+            }
+            this.totalLines = lineID;
+            this.linesWithWeights(currentDepth + 1, currentLevel + 1, lineID)
+        }
     }
 }
 
@@ -179,9 +208,7 @@ export class Graph {
                 }
             }
             created = true;
-
         }
-
         let nodesPrevLvl = nodesVisited;
         let nodesXlevel = nodesArr[currentDepth].length;
         let nodesNextLevel = nodesArr[currentDepth + 1].length;

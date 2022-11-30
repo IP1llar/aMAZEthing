@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../../css/dfs-lesson.css";
 import { Tree, Graph } from "../../utils/TreeVisual/Tree-canvas";
-function DFSLesson() {
+function BFSLesson() {
   const [graph,setGraph] = useState<Graph>()
 
   useEffect(() => {
@@ -20,10 +20,10 @@ function DFSLesson() {
     }
     TreeVisual();
   }, []);
-  async function dfs(){
-    await graph?.printPath(await graph?.dfs())
-  }
   
+  async function bfs(){
+    await graph?.printPath(await graph?.bfs());
+  }
   function delay(time: number) {
     return new Promise((res) => setTimeout(res, time));
   }
@@ -33,10 +33,10 @@ function DFSLesson() {
       
       <div id="myCanvas"></div>
       <div className="but-options">
-        <button onClick={dfs}>DFS</button>
+        <button onClick={bfs}>BFS</button>
       </div>
     </div>
   );
 }
 
-export default DFSLesson;
+export default BFSLesson;

@@ -1,0 +1,45 @@
+.whole-page-wrapper {
+    padding-top: 10vh;
+    background-color: var(--white);
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    overflow: scroll;
+  }
+  #myCanvas{
+    position: relative;
+    width:700px;
+    height:fit-content;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    transform: rotate(-90deg);
+  }
+  .but-options{
+    height: fit-content;
+
+  }
+  .yellow-line{
+    stroke: 'yellow'
+  }
+  .svg-circle{
+    height:100px;
+    width:100px;
+    z-index: 2;
+  }
+  .svg-line{
+    position: absolute;
+    z-index: 1;
+  }
+  
+  .tree-level{
+    height: 175px;
+    width:fit-content;
+    display: flex;
+    align-items: space-between;
+    justify-content: center;
+   
+  }
+  

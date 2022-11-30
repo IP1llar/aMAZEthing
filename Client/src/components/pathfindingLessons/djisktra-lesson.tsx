@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import "../../css/dfs-lesson.css";
+import "../../css/dijkstra-lesson.css";
 import { Tree, Graph } from "../../utils/TreeVisual/Tree-canvas";
-function DFSLesson() {
+function DIJSKTRALesson() {
   const [graph,setGraph] = useState<Graph>()
 
   useEffect(() => {
     async function TreeVisual() {
       const t = new Tree();
       await delay(1000);
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 10; i++) {
         t.add();
       }
       t.bfs();
-      t.linesWithoutWeights();
+      t.linesWithWeights();
       t.getNodes();
       let g = new Graph(t.getArrNodes(), t.getDepth(), t.getTotalLines());
       setGraph(g);
@@ -20,7 +20,7 @@ function DFSLesson() {
     }
     TreeVisual();
   }, []);
-  async function dfs(){
+  async function djikstra(){
     await graph?.printPath(await graph?.dfs())
   }
   
@@ -33,10 +33,11 @@ function DFSLesson() {
       
       <div id="myCanvas"></div>
       <div className="but-options">
-        <button onClick={dfs}>DFS</button>
+        <button onClick={djikstra}>Djikstra</button>
+
       </div>
     </div>
   );
 }
 
-export default DFSLesson;
+export default DIJSKTRALesson;

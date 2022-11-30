@@ -14,7 +14,8 @@ import { Provider } from "react-redux";
 import InsertionLesson from "./components/sortingLessons/insertion-lesson";
 import { store } from "./features/store";
 import SelectionLesson from "./components/sortingLessons/selection-lesson";
-
+import DIJSKTRALesson from "./components/pathfindingLessons/djisktra-lesson";
+import BFSLesson from "./components/pathfindingLessons/bfs.lesson";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -54,7 +55,9 @@ const router = createBrowserRouter([
       },
       { path: "/insertionLesson", element: <InsertionLesson /> },
       { path: "/selectionLesson", element: <SelectionLesson /> },
-      { path: "/dfsLesson", element: <DFSLesson></DFSLesson> }
+      { path: "/dfsLesson", element: <DFSLesson></DFSLesson> },
+      { path: "/bfsLesson", element: <BFSLesson></BFSLesson> },
+      { path: "/dijsktraLesson", element: <DIJSKTRALesson></DIJSKTRALesson> }
     ],
   },
 ]);
