@@ -8,7 +8,7 @@ function DIJKSTRALesson() {
     async function TreeVisual() {
       const t = new Tree();
       await delay(1000);
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 12; i++) {
         t.add();
       }
       t.bfs();
@@ -21,7 +21,7 @@ function DIJKSTRALesson() {
     TreeVisual();
   }, []);
   async function dijkstra(){
-    console.log(await graph?.dijkstra());
+    await graph?.printPath(await graph?.dijkstra());
   }
   
   function delay(time: number) {

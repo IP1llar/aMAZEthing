@@ -17,7 +17,8 @@
     flex-direction: column;
     transform: rotate(-90deg);
   }
-  .but-options{
+  .dijk .but-options{
+    margin-top: 40px;
     height: fit-content;
 
   }
