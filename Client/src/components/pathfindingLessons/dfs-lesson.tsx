@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef} from "react";
 import "../../css/dfs-lesson.css";
 import { Tree, Graph } from "../../utils/TreeVisual/Tree-canvas";
 function DFSLesson() {
   const [graph,setGraph] = useState<Graph>()
+  const ref = useRef(null);
 
   useEffect(() => {
     async function TreeVisual() {
@@ -12,6 +13,7 @@ function DFSLesson() {
         t.add();
       }
       t.bfs();
+      t.calculateWidthDynamically(ref.current.offsetWidth);
       t.linesWithoutWeights();
       t.getNodes();
       let g = new Graph(t.getArrNodes(), t.getDepth(), t.getTotalLines());
@@ -31,7 +33,7 @@ function DFSLesson() {
   return (
     <div className="whole-page-wrapper dfs">
       
-      <div id="myCanvas"></div>
+      <div ref={ref} id="myCanvas"></div>
       <div className="but-options">
         <button onClick={dfs}>DFS</button>
       </div>

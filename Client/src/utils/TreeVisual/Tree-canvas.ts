@@ -1,4 +1,3 @@
-const cheatPosX: number[][] = [[350], [300, 400], [250, 350, 450], [200, 300, 400, 500], [150, 250, 350, 450, 550], [100, 200, 300, 400, 500, 600], [50, 150, 250, 350, 450, 550, 650], [0, 100, 200, 300, 400, 500, 600]];
 function delay(time: number) {
     return new Promise((res) => setTimeout(res, time));
 }
@@ -31,6 +30,7 @@ export class Tree {
     numNodes: number;
     totalLines: number;
     lineStructure: any[];
+    xCoordinatesCode:any;
     nodes: any;
     constructor() {
         this.root = null;
@@ -38,7 +38,8 @@ export class Tree {
         this.numNodes = 0;
         this.totalLines = 0;
         this.nodes = [];
-        this.lineStructure = []
+        this.lineStructure = [];
+        this.xCoordinatesCode = [];
     }
     getLineStructure() {
         return this.lineStructure;
@@ -134,17 +135,41 @@ export class Tree {
             return depth
         }
     }
+    calculateWidthDynamically(width: number, depth: number = this.depth, numNodes: number = this.numNodes) {
+        let half = Math.floor(width / 2);
+        let maxAmountNodes = Math.floor(numNodes / 2);
+        
+        let num = 1;
+        for (let i = 0; i < maxAmountNodes; i++) {
 
+            if (num === 1) {
+                this.xCoordinatesCode.push([half]);
+            } else {
+                let newArr = [];
+                if(num%2===1) newArr.push(half);
+                let iterations = 0;
+                while (iterations < ((num - 1) / 2)) {
+                    num % 2 === 1 ? newArr.unshift(half - 100 - 100 * iterations) : newArr.unshift(half - 50 - 100 * iterations);
+                    num % 2 === 1 ? newArr.push(half + 100 + 100 * iterations) : newArr.push(half + 50 + 100 * iterations);
+                    iterations++;
+                }
+                this.xCoordinatesCode.push(newArr)
+            }
+
+            num++
+        }
+        console.log(this.xCoordinatesCode)
+    }
     linesWithoutWeights(currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100) {
 
         if (currentLevel < this.depth) {
             let collection = document.getElementById(`tree-level${currentLevel}`)!.children
             for (let i = 0; i < collection.length; i++) {
                 let collectionBLW = document.getElementById(`tree-level${currentLevel + 1}`)!.children
-                let posx0 = cheatPosX[collection.length - 1][i];
+                let posx0 = this.xCoordinatesCode[collection.length - 1][i];
                 let posy0 = (currentDepth * 100) + 50;
                 for (let j = 0; j < collectionBLW.length; j++) {
-                    let posx1 = cheatPosX[collectionBLW.length - 1][j];
+                    let posx1 = this.xCoordinatesCode[collectionBLW.length - 1][j];
                     let posy1 = ((currentLevel) * 100) + 50;
                     document.getElementById(`myCanvas`)!.innerHTML += `<svg class="svg-line"><line id="${lineID}" x1="${posx0}" y1="${posy0}" x2="${posx1}" y2="${posy1}"  style="stroke:black;stroke-width:2" /></svg>`
                     lineID++
@@ -159,10 +184,10 @@ export class Tree {
             let collection = document.getElementById(`tree-level${currentLevel}`)!.children
             for (let i = 0; i < collection.length; i++) {
                 let collectionBLW = document.getElementById(`tree-level${currentLevel + 1}`)!.children
-                let posx0 = cheatPosX[collection.length - 1][i];
+                let posx0 = this.xCoordinatesCode[collection.length - 1][i];
                 let posy0 = (currentDepth * 175) + 50;
                 for (let j = 0; j < collectionBLW.length; j++) {
-                    let posx1 = cheatPosX[collectionBLW.length - 1][j];
+                    let posx1 = this.xCoordinatesCode[collectionBLW.length - 1][j];
                     let posy1 = ((currentLevel) * 175) + 50;
                     let flag = false;
                     let weight = 0;
@@ -343,12 +368,12 @@ export class Graph {
 
     async dijkstra(currentPos: any = this.vertices[0], end: any = this.vertices[this.vertices.length - 1], path: any = [{ 0: { id: 0, weight: 0 }, 1: this.vertices[0] }]) {
         let found = false;
-        let visitedNodes:any = {};
+        let visitedNodes: any = {};
         let count = 0;
         let unvisitedNodes: any = {};
         for (let vertex of this.vertices) {
-            if (vertex.id === currentPos.id) unvisitedNodes[currentPos.id] = [0,0]
-            else unvisitedNodes[vertex.id] = [Infinity,0]
+            if (vertex.id === currentPos.id) unvisitedNodes[currentPos.id] = [0, 0]
+            else unvisitedNodes[vertex.id] = [Infinity, 0]
         }
         console.log('FIRST STAGE', unvisitedNodes);
         let dictionaryLines: any = {};
@@ -358,15 +383,15 @@ export class Graph {
                 if (neighbor['1'] !== currentPos.id) dictionaryLines[`${neighbor['1'].id},${neighbor['0'].id}`] = neighbor['0'].weight;
             }
         }
-        console.log('SECOND STAGE', unvisitedNodes,dictionaryLines);
+        console.log('SECOND STAGE', unvisitedNodes, dictionaryLines);
         while (Object.keys(unvisitedNodes) && !found && count < 50) {
             count++;
             let node: any = Object.keys(unvisitedNodes).reduce((acc, key) => {
                 return unvisitedNodes[key][0] < acc[1][0] ? [key, unvisitedNodes[key]] : acc;
-            }, ['null', [Infinity,0]]);
+            }, ['null', [Infinity, 0]]);
             console.log('NODE1:', node)
             console.log(`comparing ${node[0]}, with ${node[1][0]}  to  ${end.id}`)
-            visitedNodes[node[0]] = [node[0]==1?0:node[1][0],node[0]==1?0:node[1][1]];
+            visitedNodes[node[0]] = [node[0] == 1 ? 0 : node[1][0], node[0] == 1 ? 0 : node[1][1]];
             if (node[0] == end.id) break;
             if (node[1][0] === Infinity) return false;
             console.log('VISITED', visitedNodes)
@@ -375,48 +400,48 @@ export class Graph {
             console.log('NODE:', node)
             let neighbors: any = node.adjacencies;
             console.log('NEIGHBORS', neighbors)
-        
+
             for (let neighbor of neighbors) {
                 let weight = dictionaryLines[`${neighbor['1'].id},${neighbor['0'].id}`];
                 let sum = unvisitedNodes[`${node.id}`][0] + (weight as number);
-                if(!unvisitedNodes[`${neighbor['1'].id}`]) continue;
-                if (sum < unvisitedNodes[`${neighbor['1'].id}`][0]) unvisitedNodes[`${neighbor['1'].id}`] = [sum,node.id];
+                if (!unvisitedNodes[`${neighbor['1'].id}`]) continue;
+                if (sum < unvisitedNodes[`${neighbor['1'].id}`][0]) unvisitedNodes[`${neighbor['1'].id}`] = [sum, node.id];
             }
-            
-            console.log('BEFORE DELETE',unvisitedNodes)
+
+            console.log('BEFORE DELETE', unvisitedNodes)
             delete unvisitedNodes[node.id]
-            console.log('AFTER DELETE',unvisitedNodes)
+            console.log('AFTER DELETE', unvisitedNodes)
             console.log('herereeee', visitedNodes, count)
         }
         console.log('VISITED', visitedNodes)
         let length = Object.keys(visitedNodes).length;
-        console.log('length',length);
-        
+        console.log('length', length);
+
         let start = visitedNodes[Object.keys(visitedNodes).length];
-        let revPath:any =[];
+        let revPath: any = [];
         revPath.unshift(length)
 
         revPath.unshift(start[1]);
-        console.log(length,start)
-        console.log('START', start,revPath)
-        
-        while(visitedNodes[start[1]][0]!=0){
+        console.log(length, start)
+        console.log('START', start, revPath)
+
+        while (visitedNodes[start[1]][0] != 0) {
             start = visitedNodes[start[1]];
             revPath.unshift(start[1]);
-            if(visitedNodes[`${start[1]}`][0]== 0 || visitedNodes[start[1]][0]== '0'){
+            if (visitedNodes[`${start[1]}`][0] == 0 || visitedNodes[start[1]][0] == '0') {
                 console.log('hey')
                 break;
-            } 
+            }
         }
-        console.log('path',revPath)
+        console.log('path', revPath)
 
-        let finalPath:any =[]
+        let finalPath: any = []
         finalPath.push({ '0': 0, '1': currentPos })
         revPath.shift()
-        let node = {'0':0,'1':currentPos}
-        while(revPath.length){
-            node = node['1'].adjacencies.filter((el:any)=>el['1'].id==revPath[0])[0];
-            console.log(node,revPath)
+        let node = { '0': 0, '1': currentPos }
+        while (revPath.length) {
+            node = node['1'].adjacencies.filter((el: any) => el['1'].id == revPath[0])[0];
+            console.log(node, revPath)
             finalPath.push(node);
             revPath.shift();
             console.log(revPath)

@@ -8,14 +8,14 @@
     justify-content: space-evenly;
     overflow: scroll;
   }
-  #myCanvas{
+  .dijk #myCanvas{
     position: relative;
     width:700px;
     height:fit-content;
     display: flex;
     align-items: center;
     flex-direction: column;
-    transform: rotate(-90deg);
+    transform: rotate(-90deg); 
   }
   .dijk .but-options{
     margin-top: 40px;
