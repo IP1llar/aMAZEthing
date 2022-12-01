@@ -8,9 +8,9 @@
     justify-content: space-evenly;
     overflow: scroll;
   }
-  #myCanvas{
+  .dfs #myCanvas{
     position: relative;
-    width:700px;
+    width:1000px;
     height:fit-content;
     display: flex;
     align-items: center;

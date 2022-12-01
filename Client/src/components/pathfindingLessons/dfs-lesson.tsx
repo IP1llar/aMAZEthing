@@ -9,12 +9,12 @@ function DFSLesson() {
     async function TreeVisual() {
       const t = new Tree();
       await delay(1000);
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 40; i++) {
         t.add();
       }
       t.bfs();
       t.calculateWidthDynamically(ref.current.offsetWidth);
-      t.linesWithoutWeights();
+      t.createLines();
       t.getNodes();
       let g = new Graph(t.getArrNodes(), t.getDepth(), t.getTotalLines());
       setGraph(g);

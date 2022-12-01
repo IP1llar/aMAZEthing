@@ -8,7 +8,7 @@
     justify-content: space-evenly;
     overflow: scroll;
   }
-  #myCanvas{
+  .bfs #myCanvas{
     position: relative;
     width:700px;
     height:fit-content;

@@ -13,7 +13,7 @@ function BFSLesson() {
       }
       t.bfs();
       t.calculateWidthDynamically(ref.current.offsetWidth);
-      t.linesWithoutWeights();
+      t.createLines();
       t.getNodes();
       let g = new Graph(t.getArrNodes(), t.getDepth(), t.getTotalLines());
       setGraph(g);

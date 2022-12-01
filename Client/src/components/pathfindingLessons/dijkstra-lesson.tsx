@@ -4,17 +4,16 @@ import { Tree, Graph } from "../../utils/TreeVisual/Tree-canvas";
 function DIJKSTRALesson() {
   const [graph,setGraph] = useState<Graph>()
   const ref = useRef(null);
-
   useEffect(() => {
     async function TreeVisual() {
       const t = new Tree();
       await delay(1000);
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 15; i++) {
         t.add();
       }
       t.bfs();
       t.calculateWidthDynamically(ref.current.offsetWidth);
-      t.linesWithWeights();
+      t.createLines(175,true);//true with weights
       t.getNodes();
       console.log(t.getLineStructure())
       let g = new Graph(t.getArrNodes(), t.getDepth(), t.getLineStructure());

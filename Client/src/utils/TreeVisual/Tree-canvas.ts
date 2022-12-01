@@ -19,9 +19,6 @@ class Node {
             1: node
         })
     }
-    getChildren() {
-        return this.children;
-    }
 }
 
 export class Tree {
@@ -113,7 +110,7 @@ export class Tree {
     }
     bfs() {
         const queue: any = [];
-        document.getElementById("myCanvas")!.innerHTML += `<div id='tree-level${this.depth}' class='tree-level'></div>`;
+        document.getElementById("myCanvas")!.innerHTML += `<div ref1={ref1} id='tree-level${this.depth}' class='tree-level'></div>`;
         document.getElementById(`tree-level${this.depth}`)!.innerHTML += `<svg class="svg-circle"><circle cx="50%" cy="50%" r="20" stroke="#1B432E" stroke-width="3" fill="#6EAC64"  id="${this.root.value}" ></circle></svg>`
         this.root.children.forEach((el: any) => {
             queue.push(el);
@@ -160,41 +157,25 @@ export class Tree {
         }
         console.log(this.xCoordinatesCode)
     }
-    linesWithoutWeights(currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100) {
+    createLines(refHeightTreeLevel:any =100,linesWithWeights:boolean = false ,currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100) {
 
         if (currentLevel < this.depth) {
             let collection = document.getElementById(`tree-level${currentLevel}`)!.children
             for (let i = 0; i < collection.length; i++) {
                 let collectionBLW = document.getElementById(`tree-level${currentLevel + 1}`)!.children
                 let posx0 = this.xCoordinatesCode[collection.length - 1][i];
-                let posy0 = (currentDepth * 100) + 50;
+                let posy0 = (currentDepth * refHeightTreeLevel) + 50;
                 for (let j = 0; j < collectionBLW.length; j++) {
                     let posx1 = this.xCoordinatesCode[collectionBLW.length - 1][j];
-                    let posy1 = ((currentLevel) * 100) + 50;
-                    document.getElementById(`myCanvas`)!.innerHTML += `<svg class="svg-line"><line id="${lineID}" x1="${posx0}" y1="${posy0}" x2="${posx1}" y2="${posy1}"  style="stroke:black;stroke-width:2" /></svg>`
-                    lineID++
-                }
-            }
-            this.totalLines = lineID;
-            this.linesWithoutWeights(currentDepth + 1, currentLevel + 1, lineID)
-        }
-    }
-    linesWithWeights(currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100) {
-        if (currentLevel < this.depth) {
-            let collection = document.getElementById(`tree-level${currentLevel}`)!.children
-            for (let i = 0; i < collection.length; i++) {
-                let collectionBLW = document.getElementById(`tree-level${currentLevel + 1}`)!.children
-                let posx0 = this.xCoordinatesCode[collection.length - 1][i];
-                let posy0 = (currentDepth * 175) + 50;
-                for (let j = 0; j < collectionBLW.length; j++) {
-                    let posx1 = this.xCoordinatesCode[collectionBLW.length - 1][j];
-                    let posy1 = ((currentLevel) * 175) + 50;
-                    let flag = false;
-                    let weight = 0;
-                    while (!flag) {
-                        weight = Math.floor(Math.random() * 7);
-                        if (weight > 1) flag = true;
-                        if (weight === 3 || weight === 5 || weight === 7) weight--;
+                    let posy1 = ((currentLevel) * refHeightTreeLevel) + 50;
+                    let weight = 2;
+                    if(linesWithWeights){
+                        let flag = false;
+                        while (!flag) {
+                            weight = Math.floor(Math.random() * 7);
+                            if (weight > 1) flag = true;
+                            if (weight === 3 || weight === 5 || weight === 7) weight--;
+                        }
                     }
                     document.getElementById(`myCanvas`)!.innerHTML += `<svg class="svg-line"><line id="${lineID}" x1="${posx0}" y1="${posy0}" x2="${posx1}" y2="${posy1}"  style="stroke:black;stroke-width:${weight}" /></svg>`
                     this.lineStructure.push({ id: lineID, weight: weight })
@@ -202,7 +183,7 @@ export class Tree {
                 }
             }
             this.totalLines = lineID;
-            this.linesWithWeights(currentDepth + 1, currentLevel + 1, lineID)
+            this.createLines(refHeightTreeLevel,linesWithWeights,currentDepth + 1, currentLevel + 1, lineID)
         }
     }
 }
