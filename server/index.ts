@@ -45,12 +45,23 @@ app.use(
     maxAge: 86400,
   })
 );
+
+app.get('/', (req, res) => {
+  res.send('<h1>Hello, your server is running!</h1>');
+});
+
 app.use(userRouter);
 app.use(errorHandler);
 app.use(notFoundHandler);
 
 
 
-server.listen(process.env.PORT, () => {
-  console.log(`Listening on port ${process.env.PORT}`);
+// server.listen(process.env.PORT, () => {
+//   console.log(`Listening on port ${process.env.PORT}`);
+// });
+
+const port: number = Number(process.env.PORT) || 3000;
+
+server.listen(port, '0.0.0.0', () => {
+  console.log(`Server is listening on port ${port}`);
 });

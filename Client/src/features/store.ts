@@ -5,10 +5,10 @@ import gameReducer from './game_slice';
 function saveToLocalStorage(store: any) {
   try {
     const serializedStore = JSON.stringify(store);
-    console.log({serializedStore})
+    // console.log({serializedStore})
     window.localStorage.setItem('store', serializedStore);
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 }
 
@@ -18,7 +18,7 @@ function loadFromLocalStorage() {
     if (serializedStore === null) return undefined;
     return JSON.parse(serializedStore);
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return undefined;
   }
 }

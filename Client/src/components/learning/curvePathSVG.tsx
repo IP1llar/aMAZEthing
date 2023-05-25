@@ -69,7 +69,7 @@ function CurvePath() {
       });
       if (obj.user) dispatch(refreshPathLessons(obj.user));
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 

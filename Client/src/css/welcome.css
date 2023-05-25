@@ -16,6 +16,7 @@
 .welcome {
   color: var(--dark-green);
   padding: 0px 40px;
+  cursor: default;
 }
 
 .options {
@@ -43,4 +44,8 @@
 .welcome-small, .options-small {
   padding: 0px 40px;
   font-size: 100px;
+}
+
+.options h3 {
+  color: inherit;
 }

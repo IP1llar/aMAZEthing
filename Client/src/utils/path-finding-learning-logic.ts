@@ -108,7 +108,7 @@ export class Tree {
             }
             evalChildren(node, this.numNodes, this.minimumBrothers);
             this.numNodes++
-            console.log(this.numNodes)
+            // console.log(this.numNodes)
         }
     }
     bfs(queue: Node[] = [this.root], depth: number = 0) {
@@ -144,7 +144,7 @@ export class Tree {
             }
             num++
         }
-        console.log(this.xCoordinatesCode)
+        // console.log(this.xCoordinatesCode)
     }
     createLines(refHeightTreeLevel: any = 100, linesWithWeights: boolean = false, currentDepth: number = 0, currentLevel: number = 1, lineID: number = 100) {
 
@@ -335,7 +335,7 @@ export class Graph {
                 numChildsVisited = 0;
                 emptyQueue = false;
             }
-            console.log(neighbors)
+            // console.log(neighbors)
             for (let neighbor of neighbors) {
                 numChildsVisited++
                 let visitedFlag = false;
@@ -354,7 +354,7 @@ export class Graph {
                 }
             }
         }
-        console.log('FINAL PATH', path)
+        // console.log('FINAL PATH', path)
         return path;
     }
 
@@ -368,7 +368,7 @@ export class Graph {
             if (vertex.id === currentPos.id) unvisitedNodes[currentPos.id] = [0, 0]
             else unvisitedNodes[vertex.id] = [Infinity, 0]
         }
-        console.log('FIRST STAGE', unvisitedNodes);
+        // console.log('FIRST STAGE', unvisitedNodes);
         let dictionaryLines: any = {};
         for (let vertex of this.vertices) {
             let neighbors = vertex.adjacencies;
@@ -376,23 +376,23 @@ export class Graph {
                 if (neighbor['1'] !== currentPos.id) dictionaryLines[`${neighbor['1'].id},${neighbor['0'].id}`] = neighbor['0'].weight;
             }
         }
-        console.log('SECOND STAGE', unvisitedNodes, dictionaryLines);
+        // console.log('SECOND STAGE', unvisitedNodes, dictionaryLines);
         while (Object.keys(unvisitedNodes) && !found && count < 50) {
             count++;
             let node: any = Object.keys(unvisitedNodes).reduce((acc, key) => {
                 return unvisitedNodes[key][0] < acc[1][0] ? [key, unvisitedNodes[key]] : acc;
             }, ['null', [Infinity, 0]]);
-            console.log('NODE1:', node)
-            console.log(`comparing ${node[0]}, with ${node[1][0]}  to  ${end.id}`)
+            // console.log('NODE1:', node)
+            // console.log(`comparing ${node[0]}, with ${node[1][0]}  to  ${end.id}`)
             visitedNodes[node[0]] = [node[0] == 1 ? 0 : node[1][0], node[0] == 1 ? 0 : node[1][1]];
             if (node[0] == end.id) break;
             if (node[1][0] === Infinity) return false;
-            console.log('VISITED', visitedNodes)
+            // console.log('VISITED', visitedNodes)
             //NEED TO STORE THE VISITED NODES
             node = this.vertices.filter((el: Cell) => el.id == node['0'])[0];
-            console.log('NODE:', node)
+            // console.log('NODE:', node)
             let neighbors: any = node.adjacencies;
-            console.log('NEIGHBORS', neighbors)
+            // console.log('NEIGHBORS', neighbors)
 
             for (let neighbor of neighbors) {
                 let weight = dictionaryLines[`${neighbor['1'].id},${neighbor['0'].id}`];
@@ -401,31 +401,31 @@ export class Graph {
                 if (sum < unvisitedNodes[`${neighbor['1'].id}`][0]) unvisitedNodes[`${neighbor['1'].id}`] = [sum, node.id];
             }
 
-            console.log('BEFORE DELETE', unvisitedNodes)
+            // console.log('BEFORE DELETE', unvisitedNodes)
             delete unvisitedNodes[node.id]
-            console.log('AFTER DELETE', unvisitedNodes)
-            console.log('herereeee', visitedNodes, count)
+            // console.log('AFTER DELETE', unvisitedNodes)
+            // console.log('herereeee', visitedNodes, count)
         }
-        console.log('VISITED', visitedNodes)
+        // console.log('VISITED', visitedNodes)
         let length = Object.keys(visitedNodes).length;
-        console.log('length', length);
+        // console.log('length', length);
         let start = visitedNodes[end.id];
         let revPath: any = [];
         revPath.unshift(length)
 
         revPath.unshift(start[1]);
-        console.log(length, start)
-        console.log('START', start, revPath)
+        // console.log(length, start)
+        // console.log('START', start, revPath)
 
         while (visitedNodes[start[1]][0] != 0) {
             start = visitedNodes[start[1]];
             revPath.unshift(start[1]);
             if (visitedNodes[`${start[1]}`][0] == 0 || visitedNodes[start[1]][0] == '0') {
-                console.log('hey')
+                // console.log('hey')
                 break;
             }
         }
-        console.log('path', revPath)
+        // console.log('path', revPath)
 
         let finalPath: any = []
         finalPath.push({ '0': 0, '1': currentPos })
@@ -433,12 +433,12 @@ export class Graph {
         let node = { '0': 0, '1': currentPos }
         while (revPath.length) {
             node = node['1'].adjacencies.filter((el: any) => el['1'].id == revPath[0])[0];
-            console.log(node, revPath)
+            // console.log(node, revPath)
             finalPath.push(node);
             revPath.shift();
-            console.log(revPath)
+            // console.log(revPath)
         }
-        console.log(finalPath)
+        // console.log(finalPath)
         return finalPath;
     }
 }
